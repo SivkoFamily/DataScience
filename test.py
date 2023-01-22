@@ -8,3 +8,4 @@ print(data)
 type(data)
 with open('data.json', 'w') as json_file:
     json.dump(data, json_file)
+    
