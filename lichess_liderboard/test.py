@@ -7,8 +7,8 @@ result = lichessAnalys.get_leader(perf_type='bullet',
                                   count=200)
 #print('Leader ' + json.dumps(leader))
 
-user = lichessAnalys.get_userinfo('penguigim1')
-print(user)
+#user = lichessAnalys.get_userinfo('penguigim1')
+#print(user)
 
-#with open('result.json', 'w') as json_file:
-    #json.dump(result, json_file)
+with open('result.json', 'w') as json_file:
+    json.dump(result, json_file)

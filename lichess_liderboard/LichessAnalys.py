@@ -1,5 +1,12 @@
 import json
 import berserk
+import logging
+
+logging.basicConfig(filename='test_logs.log',
+                     level=logging.DEBUG,
+                     format='%(asctime)s %(levelname)s %(funcName)s || %(message)s',
+                     force=True)
+
 
 class LichessAnalys:
     def __init__(self):
@@ -8,6 +15,7 @@ class LichessAnalys:
         self.client = berserk.Client(session=self.session)
 
     def get_leader(self, **kwargs):
+        logging.info('Start function')
         try:
             get_led = self.client \
                 .users \
