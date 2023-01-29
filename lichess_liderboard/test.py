@@ -3,11 +3,11 @@ import json
 
 lichessAnalys = al.LichessAnalys()
 
-leader = lichessAnalys.get_leader(perf_type='bullet', 
-                                  count=1)
-print('Leader ' + json.dumps(leader))
+result = lichessAnalys.get_leader(perf_type='bullet', 
+                                  count=200)
+#print('Leader ' + json.dumps(leader))
 
-user = lichessAnalys.get_userinfo('penguingim1')
+user = lichessAnalys.get_userinfo('penguigim1')
 print(user)
 
 #with open('result.json', 'w') as json_file:

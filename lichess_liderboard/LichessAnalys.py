@@ -8,15 +8,25 @@ class LichessAnalys:
         self.client = berserk.Client(session=self.session)
 
     def get_leader(self, **kwargs):
-        get_led = self.client \
-            .users \
-            .get_leaderboard(kwargs['perf_type'],
-                             kwargs['count'])
-        return get_led
+        try:
+            get_led = self.client \
+                .users \
+                .get_leaderboard(kwargs['perf_type'],
+                                 kwargs['count'])
+            return get_led
+        except:
+            print('Function lederboard is not work!')
     
     def get_userinfo(self, user_id):
-        return self.client \
-            .users \
-            .get_by_id(user_id)
-        
+        try:
+            result = self.client \
+                .users \
+                .get_by_id(user_id)
+        except:
+            print('Function get_userinfo is not work!')
+        if len(result) == 0:
+            print('Name entered incorrectly!')
+            return result
+
+
 
