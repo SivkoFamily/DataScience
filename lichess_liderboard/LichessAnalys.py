@@ -1,6 +1,13 @@
+# Нужно поправить то куда сохраняются файлы при создании их в коде
 import json
 import berserk
 import logging
+#import pathlib
+#from pathlib import Path
+
+#path = Path('files', 'info')
+
+#print(str(path))
 
 logging.basicConfig(filename='test_logs.log',
                      level=logging.DEBUG,
@@ -23,17 +30,18 @@ class LichessAnalys:
                                  kwargs['count'])
             return get_led
         except:
-            print('Function lederboard is not work!')
+            logging.info('Function lederboard is not work!')
     
     def get_userinfo(self, user_id):
+        logging.info('Start function')
         try:
             result = self.client \
                 .users \
                 .get_by_id(user_id)
         except:
-            print('Function get_userinfo is not work!')
+            logging.info('Function lederboard is not work!')
         if len(result) == 0:
-            print('Name entered incorrectly!')
+            logging.info('Name entered incorrectly!')
             return result
 
 

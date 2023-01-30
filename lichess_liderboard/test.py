@@ -4,7 +4,7 @@ import json
 lichessAnalys = al.LichessAnalys()
 
 result = lichessAnalys.get_leader(perf_type='bullet', 
-                                  count=200)
+                                  count=2)
 #print('Leader ' + json.dumps(leader))
 
 #user = lichessAnalys.get_userinfo('penguigim1')
