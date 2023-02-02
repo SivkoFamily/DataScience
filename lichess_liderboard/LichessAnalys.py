@@ -11,8 +11,11 @@ import logging
 
 logging.basicConfig(filename='test_logs.log',
                      level=logging.DEBUG,
-                     format='%(asctime)s %(levelname)s %(funcName)s || %(message)s',
-                     force=True)
+                     format='%(asctime)s \
+                             %(levelname)s \
+                             %(funcName)s || \
+                             %(message)s',
+                             force=True)
 
 
 class LichessAnalys:
