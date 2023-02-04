@@ -4,10 +4,10 @@ import json
 lichessAnalys = al.LichessAnalys()
 
 result = lichessAnalys.get_leader(perf_type='bullet', 
-                                  count=2)
-print('Leader ' + json.dumps(result))
+                                count=2)
+# print('Leader ' + json.dumps(result))
 
-#user = lichessAnalys.get_userinfo('penguigim1')
+user = lichessAnalys.get_userinfo('penguigim1')
 #print(user)
 
 #with open('result.json', 'w') as json_file:
