@@ -1,9 +1,9 @@
 import json
 
 with open('result.json', 'r') as f:
-    data_with_analusis = json.loads(f.read())
+    data_with_analysis = json.loads(f.read())
 
-    data = data_with_analusis
+    data = data_with_analysis
 
 name = []
 rating = []

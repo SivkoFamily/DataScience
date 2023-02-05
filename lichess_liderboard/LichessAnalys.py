@@ -2,12 +2,6 @@
 import json
 import berserk
 import logging
-#import pathlib
-#from pathlib import Path
-
-#path = Path('files', 'info')
-
-#print(str(path))
 
 logging.basicConfig(filename='test_logs.log',
                      level=logging.DEBUG,
@@ -46,6 +40,3 @@ class LichessAnalys:
         if len(result) == 0:
             logging.info('Name entered incorrectly!')
             return result
-
-
-
