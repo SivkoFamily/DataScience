@@ -36,7 +36,19 @@ class LichessAnalys:
                 .users \
                 .get_by_id(user_id)
         except:
-            logging.info('Function lederboard is not work!')
+            logging.info('Function get_by_id is not work!')
         if len(result) == 0:
             logging.info('Name entered incorrectly!')
             return result
+
+    def get_history(self, user_id):
+        logging.info('Start function')
+        try:
+            result = self.client \
+                .users \
+                .get_rating_history(user_id)
+            return result
+        except:
+            logging.info('Function get_rating_history is not work!')
+        if len(result) == 0:
+            logging.info('Name entered incorrectly!')

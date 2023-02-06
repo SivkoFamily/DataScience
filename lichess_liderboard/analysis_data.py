@@ -24,4 +24,7 @@ def data_in_dataframe(upload_result, speed_variant):
         'progress': progress}
     df = pd.DataFrame(data=d)
     return df
-print(data_in_dataframe(data, speed_variant='blitz'))
+def data_processing(df):
+    q = df['progress'].quantile(0.95)
+    df = df[df['progress'] > q]
+    return df
