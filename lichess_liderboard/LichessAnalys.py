@@ -1,8 +1,8 @@
-# Нужно поправить то куда сохраняются файлы при создании их в коде
-import json
 import berserk
 import logging
 import pandas as pd
+from datetime import datetime
+import numpy as np
 
 logging.basicConfig(filename='test_logs.log',
                      level=logging.DEBUG,
@@ -78,3 +78,86 @@ class LichessAnalys:
             return df
         except:
             logging.info('Function data_processing does not work correctly!')
+    
+    def exporting_games(self, 
+                        id, 
+                        max_games):
+        start_date = berserk.utils.to_millis(datetime(2022, 12, 18))
+        end_date = berserk.utils.to_millis(datetime(2022, 12, 31))
+
+        result = self \
+                .client \
+                .games \
+                .export_by_player(id,
+                                  since=start_date, 
+                                  until=end_date,
+                                  max=max_games,
+                                  opening=True,
+                                  literate=True,
+                                  clocks=True,
+                                  rated=True,
+                                  analysed=True
+                                  )
+        return result
+
+    def user_chess_games(self, id_user, game_speed, exporting_games):
+        
+        clocks = []
+        game_id = []
+        moves = []
+        game_speed_attr = []
+        rating = []
+        ratingDiff = []
+        clocks_mean = []
+        
+        for i in exporting_games:
+            if i['perf'].lower() == game_speed:
+                game_speed_attr.append(i['perf'])
+                game_id.append(i['id'])
+                moves.append(i['moves'])
+                user_id_black=(i['players']['black']['user']['id'])
+                                    
+                if user_id_black == id_user:
+                    rating.append(i['players']['black']['rating'])
+                    ratingDiff.append(i['players']['black']['ratingDiff'])
+                else:
+                    rating.append(i['players']['white']['rating'])
+                    ratingDiff.append(i['players']['white']['ratingDiff'])
+
+                if i['players']['black']['user']['id'] == id_user:
+                    odd_values = i['clocks'][::2]
+                    converted_odd_values = []# надо писать исключение на случай добовления по времени
+                    clocks_in_second = []
+                    for values in odd_values:
+                        k = values / 100 / 60
+                        converted_odd_values.append(round(k, 2))
+                        for i in converted_odd_values:
+                            try:
+                                clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
+                            except IndexError:
+                                clocks_in_second.append(i)
+                    clocks_mean.append(np.mean(clocks_in_second))
+                else:
+                    odd_values = i['clocks'][1::2]
+                    converted_odd_values = []# надо писать исключение на случай добовления по времени
+                    clocks_in_second = []
+                    for values in odd_values:
+                        k = values / 100 / 60
+                        converted_odd_values.append(round(k, 2))
+                        for i in converted_odd_values:
+                            try:
+                                clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
+                            except IndexError:
+                                clocks_in_second.append(i)
+                    clocks_mean.append(np.mean(clocks_in_second))
+        
+        d = {
+            'clocks_mean': clocks_mean,
+            'game_id': game_id,
+            'game_speed': game_speed_attr,
+            'rating': rating,
+            'ratingDiff': ratingDiff
+            }
+
+        df = pd.DataFrame(data=d)
+        return df

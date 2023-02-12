@@ -19,4 +19,3 @@ data_user_for_analysis_rapid = lichessAnalys.data_processing(lichessAnalys
 data_user_for_analysis_classical = lichessAnalys.data_processing(lichessAnalys
                                  .data_in_dataframe(data_result_classical,
                                                     'classical'))
-print(data_user_for_analysis_classical)

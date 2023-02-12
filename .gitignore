@@ -148,3 +148,5 @@ bin-release/
 # should NOT be excluded as they contain compiler settings and other important
 # information for Eclipse / Flash Builder.
 /result*.json
+/lichess_liderboard/Pipfile
+/lichess_liderboard/Pipfile.lock

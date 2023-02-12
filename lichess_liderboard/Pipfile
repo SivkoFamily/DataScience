@@ -8,6 +8,8 @@ berserk = "*"
 python-dotenv = "*"
 pathlib = "*"
 pandas = "*"
+datetime = "*"
+requests-oauthlib = "*"
 
 [dev-packages]
 
