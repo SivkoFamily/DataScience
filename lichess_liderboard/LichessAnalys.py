@@ -1,7 +1,7 @@
 import berserk
 import logging
 import pandas as pd
-from datetime import datetime
+from datetime import datetime, timedelta
 import numpy as np
 
 logging.basicConfig(filename='test_logs.log',
@@ -79,11 +79,19 @@ class LichessAnalys:
         except:
             logging.info('Function data_processing does not work correctly!')
     
+    def get_dates(self):
+        start_date_fn = datetime.today() - timedelta(weeks=4)
+        start_date_fn = start_date_fn.strftime('%Y, %m, %d')
+        end_date_fn = datetime.today()
+        end_date_fn = end_date_fn.strftime('%Y, %m, %d')
+        return start_date_fn, end_date_fn
+
     def exporting_games(self, 
                         id, 
                         max_games):
-        start_date = berserk.utils.to_millis(datetime(2022, 12, 18))
-        end_date = berserk.utils.to_millis(datetime(2022, 12, 31))
+        start_date_fn, end_date_fn = self.get_dates()
+        start_date = berserk.utils.to_millis(start_date_fn)
+        end_date = berserk.utils.to_millis(end_date_fn)
 
         result = self \
                 .client \
@@ -102,16 +110,22 @@ class LichessAnalys:
 
     def user_chess_games(self, id_user, game_speed, exporting_games):
         
-        clocks = []
         game_id = []
         moves = []
         game_speed_attr = []
         rating = []
         ratingDiff = []
         clocks_mean = []
+        clocks_std = []
+        clocks_median = []
+        time_control = []
         
         for i in exporting_games:
             if i['perf'].lower() == game_speed:
+                increment = str(i['clock']['increment'])
+                initial = i['clock']['initial'] / 60
+                increment_f = i['clock']['increment']
+                time_control.append(f'{int(initial)}+{increment_f}')
                 game_speed_attr.append(i['perf'])
                 game_id.append(i['id'])
                 moves.append(i['moves'])
@@ -126,17 +140,32 @@ class LichessAnalys:
 
                 if i['players']['black']['user']['id'] == id_user:
                     odd_values = i['clocks'][::2]
-                    converted_odd_values = []# надо писать исключение на случай добовления по времени
+                    converted_odd_values = []
                     clocks_in_second = []
-                    for values in odd_values:
-                        k = values / 100 / 60
-                        converted_odd_values.append(round(k, 2))
-                        for i in converted_odd_values:
-                            try:
-                                clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
-                            except IndexError:
-                                clocks_in_second.append(i)
-                    clocks_mean.append(np.mean(clocks_in_second))
+                    if int(increment) > 0:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
+                    else:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
                 else:
                     odd_values = i['clocks'][1::2]
                     converted_odd_values = []# надо писать исключение на случай добовления по времени
@@ -150,13 +179,18 @@ class LichessAnalys:
                             except IndexError:
                                 clocks_in_second.append(i)
                     clocks_mean.append(np.mean(clocks_in_second))
-        
+                    clocks_std.append(np.std(clocks_in_second))
+                    clocks_median.append(np.median(clocks_in_second))
+       
         d = {
-            'clocks_mean': clocks_mean,
             'game_id': game_id,
             'game_speed': game_speed_attr,
             'rating': rating,
-            'ratingDiff': ratingDiff
+            'ratingDiff': ratingDiff,
+            'clocks_mean': clocks_mean,
+            'clocks_std': clocks_std,
+            'clocks_median': clocks_median,
+            'time_control': time_control
             }
 
         df = pd.DataFrame(data=d)
