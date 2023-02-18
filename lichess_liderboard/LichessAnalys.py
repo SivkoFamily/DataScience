@@ -58,13 +58,18 @@ class LichessAnalys:
             id = []
             rating = []
             progress = []
+            user_name = []
+
             for i in upload_result:
                 id.append(i['id'])
+                user_name.append(i['username'])
                 rating.append(i['perfs'][speed_variant]['rating'])
                 progress.append(i['perfs'][speed_variant]['progress'])
             d = {'id': id,
                 'rating': rating,
-                'progress': progress}
+                'progress': progress,
+                'user_name': user_name}
+            
             df = pd.DataFrame(data=d)
             return df
         except:
@@ -81,9 +86,7 @@ class LichessAnalys:
     
     def get_dates(self):
         start_date_fn = datetime.today() - timedelta(weeks=4)
-        start_date_fn = start_date_fn.strftime('%Y, %m, %d')
         end_date_fn = datetime.today()
-        end_date_fn = end_date_fn.strftime('%Y, %m, %d')
         return start_date_fn, end_date_fn
 
     def exporting_games(self, 
@@ -168,19 +171,32 @@ class LichessAnalys:
                         clocks_median.append(np.median(clocks_in_second))
                 else:
                     odd_values = i['clocks'][1::2]
-                    converted_odd_values = []# надо писать исключение на случай добовления по времени
+                    converted_odd_values = []
                     clocks_in_second = []
-                    for values in odd_values:
-                        k = values / 100 / 60
-                        converted_odd_values.append(round(k, 2))
-                        for i in converted_odd_values:
-                            try:
-                                clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
-                            except IndexError:
-                                clocks_in_second.append(i)
-                    clocks_mean.append(np.mean(clocks_in_second))
-                    clocks_std.append(np.std(clocks_in_second))
-                    clocks_median.append(np.median(clocks_in_second))
+                    if int(increment) > 0:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
+                    else:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
        
         d = {
             'game_id': game_id,
@@ -191,6 +207,53 @@ class LichessAnalys:
             'clocks_std': clocks_std,
             'clocks_median': clocks_median,
             'time_control': time_control
+            }
+
+        df = pd.DataFrame(data=d)
+        return df
+    
+    def eval_games_by_id(self, game_id, user_id):
+
+        result = self.client.games.export(game_id)
+
+        eval = []
+        mistake = []
+        blunder = []
+        inaccuracy = []
+        acpl = []
+        
+        if result['players']['black']['user']['id'] == user_id:
+            eval_after_slices = []
+            list_analysis = result['analysis']
+            for i in list_analysis:
+                try:
+                    eval_after_slices.append(i['eval'])
+                except KeyError:
+                    eval_after_slices.append(i['mate'])
+            eval_after_slices = eval_after_slices[1::2]
+            [eval.append(i) for i in eval_after_slices]
+            mistake.append(result['players']['black']['analysis']['mistake'])
+            blunder.append(result['players']['black']['analysis']['blunder'])
+            inaccuracy.append(result['players']['black']['analysis']['inaccuracy'])
+            acpl.append(result['players']['black']['analysis']['acpl'])
+        else:
+            eval_after_slices = []
+            list_analysis = result['analysis']
+            for i in list_analysis:
+                try:
+                    eval_after_slices.append(i['eval'])
+                except KeyError:
+                    eval_after_slices.append(i['mate'])
+            eval_after_slices = eval_after_slices[::2]
+            [eval.append(i) for i in eval_after_slices]
+            mistake.append(result['players']['white']['analysis']['mistake'])
+            blunder.append(result['players']['white']['analysis']['blunder'])
+            inaccuracy.append(result['players']['white']['analysis']['inaccuracy'])
+            acpl.append(result['players']['white']['analysis']['acpl'])
+        d = {'mistake': mistake,
+             'blunder': blunder,
+             'inaccuracy': inaccuracy,
+             'acpl': acpl
             }
 
         df = pd.DataFrame(data=d)
