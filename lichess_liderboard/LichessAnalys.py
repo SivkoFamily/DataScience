@@ -38,7 +38,7 @@ class LichessAnalys:
             logging.info('Name entered incorrectly!')
         return result
 
-    def get_history(self, user_id):
+    def get_history_activity(self, user_id, speed_variant):
         logging.info('Start function get_history')
         try:
             result = self.client \
@@ -46,7 +46,24 @@ class LichessAnalys:
                 .get_rating_history(user_id)
             if len(result) == 0:
                 logging.info('Name entered incorrectly!')
-            return result
+            date = []
+            rating = []
+            for i in result:
+                if i['name'] == speed_variant:
+                    p = i['points']
+                    for i in p:
+                        found_date = [i[0], i[1]+1, i[2]]
+                        to_date = datetime(*found_date)
+                        date.append(to_date)
+                        rating.append(i[3])
+            d = {
+                'date': date,
+                'rating': rating
+                }
+
+            df = pd.DataFrame(data=d)
+
+            return df
         except:
             logging.info('Function get_rating_history does not work correctly!')
 
@@ -122,6 +139,7 @@ class LichessAnalys:
         clocks_std = []
         clocks_median = []
         time_control = []
+        date = []
         
         for i in exporting_games:
             if i['perf'].lower() == game_speed:
@@ -132,6 +150,7 @@ class LichessAnalys:
                 game_speed_attr.append(i['perf'])
                 game_id.append(i['id'])
                 moves.append(i['moves'])
+                date.append(i['createdAt'])
                 user_id_black=(i['players']['black']['user']['id'])
                                     
                 if user_id_black == id_user:
@@ -200,6 +219,7 @@ class LichessAnalys:
        
         d = {
             'game_id': game_id,
+            'date': date,
             'game_speed': game_speed_attr,
             'rating': rating,
             'ratingDiff': ratingDiff,
@@ -257,4 +277,4 @@ class LichessAnalys:
             }
 
         df = pd.DataFrame(data=d)
-        return df
+        return df, eval
