@@ -15,4 +15,4 @@ with open('lichess_liderboard/li.json', 'r') as f:
 ll = lichessAnalys.user_chess_games(id_user='onboard247',
                                     game_speed='classical',
                                     exporting_games=d)
-print(ll)
+print(li)
