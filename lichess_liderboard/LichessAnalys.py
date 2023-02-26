@@ -155,7 +155,7 @@ class LichessAnalys:
                                     
                 if user_id_black == id_user:
                     rating.append(i['players']['black']['rating'])
-                    ratingDiff.append(i['players']['black']['ratingDiff'])
+                    ratingDiff.append(i['players']['black']['ratingDiff']) 
                 else:
                     rating.append(i['players']['white']['rating'])
                     ratingDiff.append(i['players']['white']['ratingDiff'])
@@ -273,8 +273,7 @@ class LichessAnalys:
         d = {'mistake': mistake,
              'blunder': blunder,
              'inaccuracy': inaccuracy,
-             'acpl': acpl
-            }
+             'acpl': acpl}
 
         df = pd.DataFrame(data=d)
-        return df, eval
+        return df #, eval
