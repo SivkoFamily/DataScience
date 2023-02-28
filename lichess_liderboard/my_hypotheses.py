@@ -7,6 +7,18 @@ class ProgressivePlayerCanBeACheater:
         self.lichess_analys = al.LichessAnalys()
         self.perf_types = 'classical'
 
+    def get_df(self, perf_types):
+        get_led = self.lichess_analys.get_leader(perf_type=perf_types, 
+                                    count=200)
+        df = self.lichess_analys.data_in_dataframe(
+                            get_led,
+                            speed_variant=perf_types)
+        leaders_in_progress = self \
+                                .lichess_analys \
+                                .data_processing(df=df)
+        
+        return leaders_in_progress
+
     def users_by_exporting_games(self):
         result = pd.DataFrame(columns=[
             'user_id',
@@ -47,22 +59,9 @@ class ProgressivePlayerCanBeACheater:
             'time_control'], how='outer')
 
         return result
-
-    def get_df(self, perf_types):
-        get_led = self.lichess_analys.get_leader(perf_type=perf_types, 
-                                  count=200)
-        df = self.lichess_analys.data_in_dataframe(
-                            get_led,
-                            speed_variant=perf_types)
-        leaders_in_progress = self \
-                             .lichess_analys \
-                             .data_processing(df=df)
-        
-        return leaders_in_progress
-    
+ 
     def exporting_games_and_eval(self):
         df = self.users_by_exporting_games()
-        print('users_by_exporting_games')
         result = pd.DataFrame(columns=[
             'game_id',
             'mistake',
@@ -72,6 +71,7 @@ class ProgressivePlayerCanBeACheater:
         game_id = df['game_id']
         user_id = df['user_id']
         n = 0
+
         for k in game_id:
             user_id_1 = user_id[0+n]
             n+=1
@@ -88,4 +88,10 @@ class ProgressivePlayerCanBeACheater:
                 'inaccuracy',
                 'acpl'], how='outer')
                 
+        return result
+
+    def merge_eval_and_clocks(self):
+        users_by_exporting_games = self.users_by_exporting_games()
+        exporting_games_and_eval = self.exporting_games_and_eval()
+        result = users_by_exporting_games.merge(exporting_games_and_eval, on='game_id', how='left')
         return result

@@ -10,6 +10,9 @@ pathlib = "*"
 pandas = "*"
 datetime = "*"
 requests-oauthlib = "*"
+"plotly.express" = "*"
+numpy = "*"
+dash = "==2.8.1"
 
 [dev-packages]
 

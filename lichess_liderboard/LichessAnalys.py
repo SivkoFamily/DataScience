@@ -11,7 +11,7 @@ logging.basicConfig(filename='test_logs.log',
 
 class LichessAnalys:
     def __init__(self):
-        from config import API_TOKEN
+        from config_API import API_TOKEN
         self.session = berserk.TokenSession(API_TOKEN)
         self.client = berserk.Client(session=self.session)
 
