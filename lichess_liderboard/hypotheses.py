@@ -1,6 +1,7 @@
 import my_hypotheses as hyp
+
 hypotheses = hyp.ProgressivePlayerCanBeACheater()
-import pandas as pd
+
 df = hypotheses.merge_eval_and_clocks()
 
 # df.to_csv(r"D:\dev\DataScience\lichess_liderboard\df_classical.csv", index=False, sep=";")
