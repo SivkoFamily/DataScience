@@ -150,3 +150,5 @@ bin-release/
 /result*.json
 /lichess_liderboard/Pipfile
 /lichess_liderboard/Pipfile.lock
+/lichess_liderboard/df_classical.csv
+/lichess_liderboard/visual_lib.py
