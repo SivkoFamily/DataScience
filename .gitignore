@@ -152,3 +152,5 @@ bin-release/
 /lichess_liderboard/Pipfile.lock
 /lichess_liderboard/df_classical.csv
 /lichess_liderboard/visual_lib.py
+/lichess_liderboard/df_blitz.csv
+/lichess_liderboard/sample.json

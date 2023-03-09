@@ -5,7 +5,7 @@ import time
 class ProgressivePlayerCanBeACheater:
     def __init__(self):
         self.lichess_analys = al.LichessAnalys()
-        self.perf_types = 'classical'
+        self.perf_types = 'blitz'
 
     def get_df(self, perf_types):
         get_led = self.lichess_analys.get_leader(perf_type=perf_types, 
@@ -95,3 +95,9 @@ class ProgressivePlayerCanBeACheater:
         exporting_games_and_eval = self.exporting_games_and_eval()
         result = users_by_exporting_games.merge(exporting_games_and_eval, on='game_id', how='left')
         return result
+    
+    def user_for_detailed_analysis(self, df):
+        df_ret = df.groupby('user_id', as_index=False) \
+        .agg({'clocks_std':'mean', 'clocks_median': 'mean'}) \
+        .sort_values(['clocks_std', 'clocks_median'], ascending=[True, True])
+        return df_ret['user_id'][0]
