@@ -102,7 +102,7 @@ class LichessAnalys:
             logging.info('Function data_processing does not work correctly!')
     
     def get_dates(self):
-        start_date_fn = datetime.today() - timedelta(weeks=4)
+        start_date_fn = datetime.today() - timedelta(weeks=10)
         end_date_fn = datetime.today()
         return start_date_fn, end_date_fn
 
@@ -129,7 +129,6 @@ class LichessAnalys:
         return result
 
     def user_chess_games(self, id_user, game_speed, exporting_games):
-        
         game_id = []
         moves = []
         game_speed_attr = []
@@ -140,6 +139,7 @@ class LichessAnalys:
         clocks_median = []
         time_control = []
         date = []
+        clocks_len = []
         
         for i in exporting_games:
             if i['perf'].lower() == game_speed:
@@ -152,6 +152,7 @@ class LichessAnalys:
                 moves.append(i['moves'])
                 date.append(i['createdAt'])
                 user_id_black=(i['players']['black']['user']['id'])
+                clocks_len.append(len(i['clocks']) / 2)
                                     
                 if user_id_black == id_user:
                     rating.append(i['players']['black']['rating'])
@@ -173,9 +174,9 @@ class LichessAnalys:
                                     clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
                                 except IndexError:
                                     clocks_in_second.append(i)
-                        clocks_mean.append(np.mean(clocks_in_second))
-                        clocks_std.append(np.std(clocks_in_second))
-                        clocks_median.append(np.median(clocks_in_second))
+                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
+                        clocks_std.append(round(np.std(clocks_in_second), 2))
+                        clocks_median.append(round(np.median(clocks_in_second), 2))
                     else:
                         for values in odd_values:
                             k = values / 100 / 60
@@ -185,9 +186,9 @@ class LichessAnalys:
                                     clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
                                 except IndexError:
                                     clocks_in_second.append(i)
-                        clocks_mean.append(np.mean(clocks_in_second))
-                        clocks_std.append(np.std(clocks_in_second))
-                        clocks_median.append(np.median(clocks_in_second))
+                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
+                        clocks_std.append(round(np.std(clocks_in_second), 2))
+                        clocks_median.append(round(np.median(clocks_in_second), 2))
                 else:
                     odd_values = i['clocks'][1::2]
                     converted_odd_values = []
@@ -201,9 +202,9 @@ class LichessAnalys:
                                     clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
                                 except IndexError:
                                     clocks_in_second.append(i)
-                        clocks_mean.append(np.mean(clocks_in_second))
-                        clocks_std.append(np.std(clocks_in_second))
-                        clocks_median.append(np.median(clocks_in_second))
+                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
+                        clocks_std.append(round(np.std(clocks_in_second), 2))
+                        clocks_median.append(round(np.median(clocks_in_second), 2))
                     else:
                         for values in odd_values:
                             k = values / 100 / 60
@@ -213,10 +214,9 @@ class LichessAnalys:
                                     clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
                                 except IndexError:
                                     clocks_in_second.append(i)
-                        clocks_mean.append(np.mean(clocks_in_second))
-                        clocks_std.append(np.std(clocks_in_second))
-                        clocks_median.append(np.median(clocks_in_second))
-       
+                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
+                        clocks_std.append(round(np.std(clocks_in_second), 2))
+                        clocks_median.append(round(np.median(clocks_in_second), 2))
         d = {
             'game_id': game_id,
             'date': date,
@@ -226,10 +226,13 @@ class LichessAnalys:
             'clocks_mean': clocks_mean,
             'clocks_std': clocks_std,
             'clocks_median': clocks_median,
+            'clocks_len': clocks_len,
             'time_control': time_control
             }
-
+            
         df = pd.DataFrame(data=d)
+        df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
+        
         return df
     
     def eval_games_by_id(self, game_id, user_id):

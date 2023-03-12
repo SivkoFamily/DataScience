@@ -154,3 +154,5 @@ bin-release/
 /lichess_liderboard/visual_lib.py
 /lichess_liderboard/df_blitz.csv
 /lichess_liderboard/sample.json
+/lichess_liderboard/templates/skeleton_for_dashboart.html
+/lichess_liderboard/templates/new_skeleton_for_dashboart.html

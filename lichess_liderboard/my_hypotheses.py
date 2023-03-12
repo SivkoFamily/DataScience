@@ -5,7 +5,7 @@ import time
 class ProgressivePlayerCanBeACheater:
     def __init__(self):
         self.lichess_analys = al.LichessAnalys()
-        self.perf_types = 'blitz'
+        self.perf_types = 'classical'
 
     def get_df(self, perf_types):
         get_led = self.lichess_analys.get_leader(perf_type=perf_types, 
@@ -30,6 +30,7 @@ class ProgressivePlayerCanBeACheater:
             'clocks_mean',
             'clocks_std',
             'clocks_median',
+            'clocks_len',
             'time_control'])
         leaders_in_progress = self.get_df(perf_types=self.perf_types)
         user_id = leaders_in_progress['id']
@@ -45,6 +46,7 @@ class ProgressivePlayerCanBeACheater:
                                     exporting_games=user_exporting_games)
             user_id_i = i
             users_chess_games['user_id'] = user_id_i
+            time.sleep(1.5)
 
             result = pd.merge(result, users_chess_games, on=[
             'user_id',
@@ -56,6 +58,7 @@ class ProgressivePlayerCanBeACheater:
             'clocks_mean',
             'clocks_std',
             'clocks_median',
+            'clocks_len',
             'time_control'], how='outer')
 
         return result
@@ -80,6 +83,7 @@ class ProgressivePlayerCanBeACheater:
                 .eval_games_by_id(game_id=k, user_id=user_id_1)
             game_id_k = k
             eval_games_by_id['game_id'] = game_id_k
+            time.sleep(1.5)
 
             result = pd.merge(result, eval_games_by_id, on=[
                 'game_id',
@@ -96,7 +100,7 @@ class ProgressivePlayerCanBeACheater:
         result = users_by_exporting_games.merge(exporting_games_and_eval, on='game_id', how='left')
         return result
     
-    def user_for_detailed_analysis(self, df):
+    def user_for_detailed_analysis(self, df) -> str:
         df_ret = df.groupby('user_id', as_index=False) \
         .agg({'clocks_std':'mean', 'clocks_median': 'mean'}) \
         .sort_values(['clocks_std', 'clocks_median'], ascending=[True, True])
