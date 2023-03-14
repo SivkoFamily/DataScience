@@ -105,3 +105,115 @@ class ProgressivePlayerCanBeACheater:
         .agg({'clocks_std':'mean', 'clocks_median': 'mean'}) \
         .sort_values(['clocks_std', 'clocks_median'], ascending=[True, True])
         return df_ret['user_id'][0]
+
+    def filtering_chess_games(self, user_id:str) -> pd.DataFrame:
+        games_user = lichessAnalys.exporting_games(user_id, max_games=200)
+        game_id = []
+        time_control = []
+        date = []
+        clocks_len = []
+        clocks_list = []
+
+        for i in games_user:
+            if i['perf'].lower() == 'classical':# ВНИМАНИЕ HARDCODE
+                increment = str(i['clock']['increment'])
+                initial = i['clock']['initial'] / 60
+                increment_f = i['clock']['increment']
+                time_control.append(f'{int(initial)}+{increment_f}')
+                game_id.append(i['id'])
+                date.append(i['createdAt'])
+                user_id_black=(i['players']['black']['user']['id'])
+                clocks_len.append(len(i['clocks']) / 2)
+
+                if i['players']['black']['user']['id'] == user_id:# ВНИМАНИЕ HARDCODE
+                    odd_values = i['clocks'][::2]
+                    converted_odd_values = []
+                    clocks_in_second = []
+                    if int(increment) > 0:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                    else:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                    clocks_list.append([round(i, 2) for i in clocks_in_second])
+                else:
+                    odd_values = i['clocks'][1::2]
+                    converted_odd_values = []
+                    clocks_in_second = []
+                    if int(increment) > 0:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                    else:
+                        for values in odd_values:
+                            k = values / 100 / 60
+                            converted_odd_values.append(round(k, 2))
+                            for i in converted_odd_values:
+                                try:
+                                    clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
+                                except IndexError:
+                                    clocks_in_second.append(i)
+                    clocks_list.append([round(i, 2) for i in clocks_in_second])
+        d = {
+            'date': date,
+            'game_id': game_id,
+            'time_control': time_control,
+            'clocks_list': clocks_list,
+            'clocks_len': clocks_len
+            }
+
+        df = pd.DataFrame(data=d)
+        df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
+        df = df[df['clocks_len'] > 25]
+        df['user_id'] = user_id
+        return df
+
+    def exporting_games_and_eval_for_filter(self):
+        df = self.filtering_chess_games()
+        result = pd.DataFrame(columns=[
+            'game_id',
+            'user_id',
+            'eval'
+            ])
+        game_id = df['game_id']
+        user_id = df['user_id']
+        n = 0
+
+        for k in game_id:
+            user_id_1 = user_id[0+n]
+            n+=1
+            eval_games_by_id = self \
+                .lichess_analys \
+                .evals_for_filter(game_id=k, user_id=user_id_1)
+            game_id_k = k
+            eval_games_by_id['game_id'] = game_id_k
+            time.sleep(1.5)
+
+            result = pd.merge(result, eval_games_by_id, on=[
+                'game_id',
+                'user_id',
+                'eval'], how='outer')
+        return result
+
+    def merge_eval_and_clocks_after_filter(self):
+        filtering_chess_games = self.filtering_chess_games()
+        exporting_games_and_eval_for_filter = self.exporting_games_and_eval_for_filter()
+        result = filtering_chess_games.merge(exporting_games_and_eval_for_filter, on='game_id', how='left')
+        return result

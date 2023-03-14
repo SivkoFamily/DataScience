@@ -235,7 +235,7 @@ class LichessAnalys:
         
         return df
     
-    def eval_games_by_id(self, game_id, user_id):
+    def eval_games_by_id(self, game_id, user_id): # НУЖНО УДАЛИТЬ EVAL
 
         result = self.client.games.export(game_id)
 
@@ -279,4 +279,35 @@ class LichessAnalys:
              'acpl': acpl}
 
         df = pd.DataFrame(data=d)
-        return df #, eval
+        return df
+    
+    def evals_for_filter(self, game_id, user_id):
+
+        result = self.client.games.export(game_id)
+        eval = []
+
+        if result['players']['black']['user']['id'] == user_id:
+            eval_after_slices = []
+            list_analysis = result['analysis']
+            for i in list_analysis:
+                try:
+                    eval_after_slices.append(i['eval'])
+                except KeyError:
+                    eval_after_slices.append(i['mate'])
+            eval_after_slices = eval_after_slices[1::2]
+            [eval.append(i) for i in eval_after_slices]
+        else:
+            eval_after_slices = []
+            list_analysis = result['analysis']
+            for i in list_analysis:
+                try:
+                    eval_after_slices.append(i['eval'])
+                except KeyError:
+                    eval_after_slices.append(i['mate'])
+            eval_after_slices = eval_after_slices[::2]
+            [eval.append(i) for i in eval_after_slices]
+
+        d = {'evals': eval}
+        df = pd.DataFrame(data=d)
+
+        return df 
