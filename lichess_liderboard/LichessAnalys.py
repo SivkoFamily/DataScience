@@ -4,10 +4,10 @@ import pandas as pd
 from datetime import datetime, timedelta
 import numpy as np
 
-logging.basicConfig(filename='test_logs.log',
-                     level=logging.DEBUG,
-                     format='%(asctime)s %(levelname)s %(funcName)s || %(message)s', force=True)
-
+logging.basicConfig(
+    filename='test_logs.log',
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s %(funcName)s || %(message)s', force=True)
 
 class LichessAnalys:
     def __init__(self):
@@ -26,7 +26,7 @@ class LichessAnalys:
         except:
             logging.info('Function lederboard does not work correctly!')
     
-    def get_userinfo(self, user_id):
+    def get_userinfo(self, user_id: str):
         logging.info('Start function get_userinfo')
         try:
             result = self.client \
@@ -38,7 +38,10 @@ class LichessAnalys:
             logging.info('Name entered incorrectly!')
         return result
 
-    def get_history_activity(self, user_id, speed_variant):
+    def get_history_activity(
+        self,
+        user_id: str,
+        speed_variant: int) -> pd.DataFrame:
         logging.info('Start function get_history')
         try:
             result = self.client \
@@ -56,20 +59,21 @@ class LichessAnalys:
                         to_date = datetime(*found_date)
                         date.append(to_date)
                         rating.append(i[3])
-            d = {
+            columns = {
                 'date': date,
                 'rating': rating
                 }
 
-            df = pd.DataFrame(data=d)
+            df = pd.DataFrame(data=columns)
 
             return df
         except:
             logging.info('Function get_rating_history does not work correctly!')
 
-    def data_in_dataframe(self, 
-                          upload_result,
-                          speed_variant):
+    def data_in_dataframe(
+        self,
+        upload_result,
+        speed_variant: str) -> pd.DataFrame:
         logging.info('Start function data_in_dataframe')
         try:
             id = []
@@ -82,17 +86,17 @@ class LichessAnalys:
                 user_name.append(i['username'])
                 rating.append(i['perfs'][speed_variant]['rating'])
                 progress.append(i['perfs'][speed_variant]['progress'])
-            d = {'id': id,
+            columns = {'id': id,
                 'rating': rating,
                 'progress': progress,
                 'user_name': user_name}
             
-            df = pd.DataFrame(data=d)
+            df = pd.DataFrame(data=columns)
             return df
         except:
             logging.info('Function data_in_dataframe does not work correctly!')
 
-    def data_processing(self, df):
+    def data_processing(self, df: pd.DataFrame) -> pd.DataFrame:
         logging.info('Start function data_processing')
         try:
             q = df['progress'].quantile(0.95)
@@ -106,9 +110,7 @@ class LichessAnalys:
         end_date_fn = datetime.today()
         return start_date_fn, end_date_fn
 
-    def exporting_games(self, 
-                        id, 
-                        max_games):
+    def exporting_games(self, id: str, max_games: int):
         start_date_fn, end_date_fn = self.get_dates()
         start_date = berserk.utils.to_millis(start_date_fn)
         end_date = berserk.utils.to_millis(end_date_fn)
@@ -128,7 +130,11 @@ class LichessAnalys:
                                   )
         return result
 
-    def user_chess_games(self, id_user, game_speed, exporting_games):
+    def user_chess_games(
+        self,
+        id_user: str,
+        game_speed: int,
+        exporting_games: str) -> pd.DataFrame:
         game_id = []
         moves = []
         game_speed_attr = []
@@ -167,57 +173,111 @@ class LichessAnalys:
                     clocks_in_second = []
                     if int(increment) > 0:
                         for values in odd_values:
-                            k = values / 100 / 60
-                            converted_odd_values.append(round(k, 2))
-                            for i in converted_odd_values:
-                                try:
-                                    clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
-                                except IndexError:
-                                    clocks_in_second.append(i)
-                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
-                        clocks_std.append(round(np.std(clocks_in_second), 2))
-                        clocks_median.append(round(np.median(clocks_in_second), 2))
+                            microsec_in_seconds = round(values / 100 / 60)
+                            converted_odd_values \
+                                .append(round(microsec_in_seconds, 2))
+                        for i in converted_odd_values:
+                            try:
+                                next_value = converted_odd_values \
+                                    [converted_odd_values.index(i)+1]
+                                if i < next_value:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1]
+                                        -int(increment))
+                                    clocks_in_second.append(seconds)
+                                else:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1])
+                                    clocks_in_second.append(seconds)
+                            except IndexError:
+                                seconds = i
+                                clocks_in_second.append(seconds)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
                     else:
                         for values in odd_values:
-                            k = values / 100 / 60
-                            converted_odd_values.append(round(k, 2))
-                            for i in converted_odd_values:
-                                try:
-                                    clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
-                                except IndexError:
-                                    clocks_in_second.append(i)
-                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
-                        clocks_std.append(round(np.std(clocks_in_second), 2))
-                        clocks_median.append(round(np.median(clocks_in_second), 2))
+                            microsec_in_seconds = round(values / 100 / 60)
+                            converted_odd_values \
+                                .append(round(microsec_in_seconds, 2))
+                        for i in converted_odd_values:
+                            try:
+                                next_value = converted_odd_values \
+                                    [converted_odd_values.index(i)+1]
+                                if i < next_value:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1]
+                                        -int(increment))
+                                    clocks_in_second.append(seconds)
+                                else:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1])
+                                    clocks_in_second.append(seconds)
+                            except IndexError:
+                                seconds = i
+                                clocks_in_second.append(seconds)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
                 else:
                     odd_values = i['clocks'][1::2]
                     converted_odd_values = []
                     clocks_in_second = []
                     if int(increment) > 0:
                         for values in odd_values:
-                            k = values / 100 / 60
-                            converted_odd_values.append(round(k, 2))
-                            for i in converted_odd_values:
-                                try:
-                                    clocks_in_second.append(i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment)))
-                                except IndexError:
-                                    clocks_in_second.append(i)
-                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
-                        clocks_std.append(round(np.std(clocks_in_second), 2))
-                        clocks_median.append(round(np.median(clocks_in_second), 2))
+                            microsec_in_seconds = round(values / 100 / 60)
+                            converted_odd_values \
+                                .append(round(microsec_in_seconds, 2))
+                        for i in converted_odd_values:
+                            try:
+                                next_value = converted_odd_values \
+                                    [converted_odd_values.index(i)+1]
+                                if i < next_value:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1]
+                                        -int(increment))
+                                    clocks_in_second.append(seconds)
+                                else:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1])
+                                    clocks_in_second.append(seconds)
+                            except IndexError:
+                                seconds = i
+                                clocks_in_second.append(seconds)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
                     else:
                         for values in odd_values:
-                            k = values / 100 / 60
-                            converted_odd_values.append(round(k, 2))
-                            for i in converted_odd_values:
-                                try:
-                                    clocks_in_second.append(i-converted_odd_values[converted_odd_values.index(i)+1])
-                                except IndexError:
-                                    clocks_in_second.append(i)
-                        clocks_mean.append(round(np.mean(clocks_in_second), 2))
-                        clocks_std.append(round(np.std(clocks_in_second), 2))
-                        clocks_median.append(round(np.median(clocks_in_second), 2))
-        d = {
+                            microsec_in_seconds = round(values / 100 / 60)
+                            converted_odd_values \
+                                .append(round(microsec_in_seconds, 2))
+                        for i in converted_odd_values:
+                            try:
+                                next_value = converted_odd_values \
+                                    [converted_odd_values.index(i)+1]
+                                if i < next_value:
+                                    seconds = i-(converted_odd_values[converted_odd_values.index(i)+1]-int(increment))
+                                    clocks_in_second.append(seconds)
+                                else:
+                                    seconds = i \
+                                        -(converted_odd_values
+                                        [converted_odd_values.index(i)+1])
+                                    clocks_in_second.append(seconds)
+                            except IndexError:
+                                seconds = i
+                                clocks_in_second.append(seconds)
+                        clocks_mean.append(np.mean(clocks_in_second))
+                        clocks_std.append(np.std(clocks_in_second))
+                        clocks_median.append(np.median(clocks_in_second))
+
+        columns = {
             'game_id': game_id,
             'date': date,
             'game_speed': game_speed_attr,
@@ -230,13 +290,15 @@ class LichessAnalys:
             'time_control': time_control
             }
             
-        df = pd.DataFrame(data=d)
+        df = pd.DataFrame(data=columns)
         df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
         
         return df
     
-    def eval_games_by_id(self, game_id, user_id): # НУЖНО УДАЛИТЬ EVAL
-
+    def eval_games_by_id(
+        self,
+        game_id: str,
+        user_id: str) -> pd.DataFrame:
         result = self.client.games.export(game_id)
 
         eval = []
@@ -257,7 +319,8 @@ class LichessAnalys:
             [eval.append(i) for i in eval_after_slices]
             mistake.append(result['players']['black']['analysis']['mistake'])
             blunder.append(result['players']['black']['analysis']['blunder'])
-            inaccuracy.append(result['players']['black']['analysis']['inaccuracy'])
+            inaccuracy \
+                .append(result['players']['black']['analysis']['inaccuracy'])
             acpl.append(result['players']['black']['analysis']['acpl'])
         else:
             eval_after_slices = []
@@ -271,18 +334,18 @@ class LichessAnalys:
             [eval.append(i) for i in eval_after_slices]
             mistake.append(result['players']['white']['analysis']['mistake'])
             blunder.append(result['players']['white']['analysis']['blunder'])
-            inaccuracy.append(result['players']['white']['analysis']['inaccuracy'])
+            inaccuracy \
+                .append(result['players']['white']['analysis']['inaccuracy'])
             acpl.append(result['players']['white']['analysis']['acpl'])
-        d = {'mistake': mistake,
+        columns = {'mistake': mistake,
              'blunder': blunder,
              'inaccuracy': inaccuracy,
              'acpl': acpl}
 
-        df = pd.DataFrame(data=d)
+        df = pd.DataFrame(data=columns)
         return df
     
-    def evals_for_filter(self, game_id, user_id):
-
+    def evals_for_filter(self, game_id: str, user_id: str) -> pd.DataFrame:
         result = self.client.games.export(game_id)
         eval = []
 
@@ -307,7 +370,6 @@ class LichessAnalys:
             eval_after_slices = eval_after_slices[::2]
             [eval.append(i) for i in eval_after_slices]
 
-        d = {'evals': eval}
-        df = pd.DataFrame(data=d)
-
+        columns = {'evals': eval}
+        df = pd.DataFrame(data=columns)
         return df 
