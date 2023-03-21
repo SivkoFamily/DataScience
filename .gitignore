@@ -156,3 +156,5 @@ bin-release/
 /lichess_liderboard/sample.json
 /lichess_liderboard/templates/skeleton_for_dashboart.html
 /lichess_liderboard/templates/new_skeleton_for_dashboart.html
+/lichess_liderboard/.vscode/settings.json
+/lichess_liderboard/lichess_work_palce.py

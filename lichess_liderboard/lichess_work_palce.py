@@ -1,14 +1,20 @@
-import my_hypotheses as hyp
-import LichessAnalys as li
-import pandas as pd
-import json
-from datetime import datetime, timedelta
 import time
+import json
+
+import pandas as pd
+from datetime import datetime, timedelta
 import numpy as np
 
+import my_hypotheses as hp
+import LichessAnalys as li
+
 lichessAnalys = li.LichessAnalys()
-hypotheses = hyp.ProgressivePlayerCanBeACheater()
-message = MessageToSend()
+hypotheses = hp.ProgressivePlayerCanBeACheater()
+
+with open('D:\dev\DataScience\lichess_liderboard\df_classical.csv', 'w') as json_file:
+    json.dump(df, json_file)
+with open('result_blitz.json', 'r') as f:
+    data_result_blitz = json.loads(f.read())
 
 # with open('D:\dev\DataScience\lichess_liderboard\sample.json', 'r') as f:
 #     read_history = json.loads(f.read())
