@@ -13,11 +13,14 @@ hypotheses = hp.ProgressivePlayerCanBeACheater()
 message_to_send = ms.MessageToSend()
 
 df = hypotheses.merge_eval_and_clocks()
-# df.to_csv('./df_classical.csv', index=False, sep=",")
-# classical_data = pd.read_csv('./df_classical.csv',sep=',')
-# message_to_send.create_message_table(classical_data=classical_data)
-# user_id = hypotheses.user_for_detailed_analysis(df)
-# cloks_filtr = hypotheses.filtering_chess_games(user_id)
-# eval = hypotheses.eval_games_by_id()
+df.to_csv('./df_classical.csv', index=False, sep=",")
+classical_data = pd.read_csv('./df_classical.csv',sep=',')
+message_to_send.create_message_table(classical_data=classical_data)
+user_id = hypotheses.user_for_detailed_analysis(df)
+move_score_and_clocks = hypotheses.merge_eval_and_clocks_after_filter(
+    user_id=user_id)
+move_score_and_clocks.to_csv('./move_score_and_clocks.csv',
+    index=False,
+    sep=",")
 
-print(df)
+print(move_score_and_clocks)

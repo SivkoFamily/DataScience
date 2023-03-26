@@ -28,7 +28,7 @@ class ProgressivePlayerCanBeACheater:
             'date',
             'game_speed',
             'rating',
-            'ratingDiff',
+            'rating_diff',
             'clocks_mean',
             'clocks_std',
             'clocks_median',
@@ -56,7 +56,7 @@ class ProgressivePlayerCanBeACheater:
             'date',
             'game_speed',
             'rating',
-            'ratingDiff',
+            'rating_diff',
             'clocks_mean',
             'clocks_std',
             'clocks_median',
@@ -247,11 +247,11 @@ class ProgressivePlayerCanBeACheater:
         return df
 
     def exporting_games_and_eval_for_filter(self) -> pd.DataFrame:
-        df = self.filtering_chess_games()
+
+        df = self.users_by_exporting_games()
         result = pd.DataFrame(columns=[
             'game_id',
-            'user_id',
-            'eval'
+            'move_score'
             ])
         game_id = df['game_id']
         user_id = df['user_id']
@@ -267,18 +267,18 @@ class ProgressivePlayerCanBeACheater:
             eval_games_by_id['game_id'] = game_id_k
             time.sleep(1.5)
 
-            result = pd.merge(result, eval_games_by_id, on=[
-                'game_id',
-                'user_id',
-                'eval'], how='outer')
+            result = pd.concat([result, eval_games_by_id],
+                ignore_index=True,
+                join="outer")
         return result
 
-    def merge_eval_and_clocks_after_filter(self) -> pd.DataFrame:
-        filtering_chess_games = self.filtering_chess_games()
-        exporting_games_and_eval_for_filter = self \
-            .exporting_games_and_eval_for_filter()
+    def merge_eval_and_clocks_after_filter(self, user_id) -> pd.DataFrame:
+        filtering_chess_games = \
+            self.filtering_chess_games(user_id)
+        exporting_games_and_eval_for_filter = \
+            self.exporting_games_and_eval_for_filter()
         result = filtering_chess_games \
-            .merge(
-                exporting_games_and_eval_for_filter,
-                on='game_id', how='left')
+            .merge(exporting_games_and_eval_for_filter,
+                on='game_id',
+                how='left')
         return result

@@ -157,7 +157,7 @@ class LichessAnalys:
         moves = []
         game_speed_attr = []
         rating = []
-        ratingDiff = []
+        rating_diff = []
         clocks_mean = []
         clocks_std = []
         clocks_median = []
@@ -181,10 +181,10 @@ class LichessAnalys:
 
                 if user_id_black == id_user:
                     rating.append(i['players']['black']['rating'])
-                    ratingDiff.append(i['players']['black']['ratingDiff'])
+                    rating_diff.append(i['players']['black']['ratingDiff'])
                 else:
                     rating.append(i['players']['white']['rating'])
-                    ratingDiff.append(i['players']['white']['ratingDiff'])
+                    rating_diff.append(i['players']['white']['ratingDiff'])
 
                 if i['players']['black']['user']['id'] == id_user:
                     odd_values = i['clocks'][::2]
@@ -304,7 +304,7 @@ class LichessAnalys:
             'date': date,
             'game_speed': game_speed_attr,
             'rating': rating,
-            'ratingDiff': ratingDiff,
+            'rating_diff': rating_diff,
             'clocks_mean': clocks_mean,
             'clocks_std': clocks_std,
             'clocks_median': clocks_median,
@@ -323,7 +323,7 @@ class LichessAnalys:
         user_id: str) -> pd.DataFrame:
         result = self.client.games.export(game_id)
 
-        eval = []
+        move_score = []
         mistake = []
         blunder = []
         inaccuracy = []
@@ -338,7 +338,7 @@ class LichessAnalys:
                 except KeyError:
                     eval_after_slices.append(i['mate'])
             eval_after_slices = eval_after_slices[1::2]
-            [eval.append(i) for i in eval_after_slices]
+            [move_score.append(i) for i in eval_after_slices]
             mistake.append(result['players']['black']['analysis']['mistake'])
             blunder.append(result['players']['black']['analysis']['blunder'])
             inaccuracy \
@@ -353,22 +353,23 @@ class LichessAnalys:
                 except KeyError:
                     eval_after_slices.append(i['mate'])
             eval_after_slices = eval_after_slices[::2]
-            [eval.append(i) for i in eval_after_slices]
+            [move_score.append(i) for i in eval_after_slices]
             mistake.append(result['players']['white']['analysis']['mistake'])
             blunder.append(result['players']['white']['analysis']['blunder'])
             inaccuracy \
                 .append(result['players']['white']['analysis']['inaccuracy'])
             acpl.append(result['players']['white']['analysis']['acpl'])
-        columns = {'mistake': mistake,
-             'blunder': blunder,
-             'inaccuracy': inaccuracy,
-             'acpl': acpl}
+        columns = {
+            'mistake': mistake,
+            'blunder': blunder,
+            'inaccuracy': inaccuracy,
+            'acpl': acpl}
         df = pd.DataFrame(data=columns)
         return df
 
     def evals_for_filter(self, game_id: str, user_id: str) -> pd.DataFrame:
         result = self.client.games.export(game_id)
-        eval = []
+        move_score = []
 
         if result['players']['black']['user']['id'] == user_id:
             eval_after_slices = []
@@ -379,7 +380,7 @@ class LichessAnalys:
                 except KeyError:
                     eval_after_slices.append(i['mate'])
             eval_after_slices = eval_after_slices[1::2]
-            [eval.append(i) for i in eval_after_slices]
+            move_score.append(eval_after_slices)
         else:
             eval_after_slices = []
             list_analysis = result['analysis']
@@ -389,7 +390,7 @@ class LichessAnalys:
                 except KeyError:
                     eval_after_slices.append(i['mate'])
             eval_after_slices = eval_after_slices[::2]
-            [eval.append(i) for i in eval_after_slices]
-        columns = {'evals': eval}
+            move_score.append(eval_after_slices)
+        columns = {'move_score': move_score}
         df = pd.DataFrame(data=columns)
         return df
