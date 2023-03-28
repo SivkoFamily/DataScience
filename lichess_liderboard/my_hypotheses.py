@@ -247,7 +247,6 @@ class ProgressivePlayerCanBeACheater:
         return df
 
     def exporting_games_and_eval_for_filter(self) -> pd.DataFrame:
-
         df = self.users_by_exporting_games()
         result = pd.DataFrame(columns=[
             'game_id',

@@ -62,8 +62,7 @@ class LichessAnalys:
                         rating.append(i[3])
             columns = {
                 'date': date,
-                'rating': rating
-                }
+                'rating': rating}
             df = pd.DataFrame(data=columns)
             return df
         except:
@@ -89,7 +88,7 @@ class LichessAnalys:
                 'rating': rating,
                 'progress': progress,
                 'user_name': user_name}
-            
+
             df = pd.DataFrame(data=columns)
             return df
         except:
@@ -132,27 +131,25 @@ class LichessAnalys:
         end_date_fn: datetime):
         start_date = berserk.utils.to_millis(start_date_fn)
         end_date = berserk.utils.to_millis(end_date_fn)
-
         result = self \
                 .client \
                 .games \
                 .export_by_player(id,
-                                    since=start_date,
-                                    until=end_date,
-                                    max=max_games,
-                                    opening=True,
-                                    literate=True,
-                                    clocks=True,
-                                    rated=True,
-                                    analysed=True
-                                    )
+                    since=start_date,
+                    until=end_date,
+                    max=max_games,
+                    opening=True,
+                    literate=True,
+                    clocks=True,
+                    rated=True,
+                    analysed=True)
         return result
 
     def user_chess_games(
         self,
         id_user: str,
-        game_speed: int,
-        exporting_games: str) -> pd.DataFrame:
+        game_speed: str,
+        exporting_games) -> pd.DataFrame:
         game_id = []
         moves = []
         game_speed_attr = []
@@ -298,7 +295,6 @@ class LichessAnalys:
                         clocks_mean.append(round(np.mean(clocks_in_second), 2))
                         clocks_std.append(round(np.std(clocks_in_second), 2))
                         clocks_median.append(np.median(clocks_in_second))
-
         columns = {
             'game_id': game_id,
             'date': date,
@@ -311,7 +307,6 @@ class LichessAnalys:
             'move_count': move_count,
             'time_control': time_control
             }
-
         df = pd.DataFrame(data=columns)
         df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
 
