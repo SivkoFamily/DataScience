@@ -103,7 +103,7 @@ class LichessAnalys:
         except:
             logging.info('Function data_processing does not work correctly!')
 
-    def get_dates(self, weeks=10):
+    def get_dates(self, weeks):
         start_date_fn = datetime.today() - timedelta(weeks=weeks)
         end_date_fn = datetime.today()
         return start_date_fn, end_date_fn
@@ -117,7 +117,7 @@ class LichessAnalys:
             end_date_fn)
 
     def exporting_games(self, id: str, max_games: int):
-        start_date_fn, end_date_fn = self.get_dates()
+        start_date_fn, end_date_fn = self.get_dates(weeks=10)
         return self._internal_exporting_games(
             id,
             max_games,
