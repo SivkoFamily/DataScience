@@ -167,3 +167,5 @@ bin-release/
 /lichess_liderboard/filtering_chess_games.csv
 /lichess_liderboard/merge_eval_and_clocks_after_filter.csv
 /lichess_liderboard/templates/table_to_send.html
+/lichess_liderboard/templates/table_to_send.html
+/lichess_liderboard/lichess_work_palce.py

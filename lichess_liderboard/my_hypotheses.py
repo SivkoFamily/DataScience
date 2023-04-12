@@ -48,7 +48,7 @@ class ProgressivePlayerCanBeACheater:
                     exporting_games=user_exporting_games)
             user_id_i = i
             users_chess_games['user_id'] = user_id_i
-            time.sleep(1.5)
+            time.sleep(1)
 
             result = pd.merge(result, users_chess_games, on=[
             'user_id',
@@ -84,7 +84,7 @@ class ProgressivePlayerCanBeACheater:
                 .eval_games_by_id(game_id=k, user_id=user_id_1)
             game_id_k = k
             eval_games_by_id['game_id'] = game_id_k
-            time.sleep(1.5)
+            time.sleep(1)
 
             result = pd.merge(result, eval_games_by_id, on=[
                 'game_id',
@@ -254,17 +254,19 @@ class ProgressivePlayerCanBeACheater:
             ])
         game_id = df['game_id']
         user_id = df['user_id']
+        n = 0
 
         for k in game_id:
-            user_id_n = user_id[0]
+            user_id_n = str(user_id.iloc[[0+n]])
             eval_games_by_id = self \
                 .lichess_analys \
                 .evals_for_filter(game_id=k, user_id=user_id_n)
             eval_games_by_id['game_id'] = k
-            time.sleep(1.5)
+            time.sleep(1)
             result = pd.concat([result, eval_games_by_id],
                 ignore_index=True,
                 join="outer")
+            n+=1
         return result
 
     def merge_eval_and_clocks_after_filter(self,
@@ -297,24 +299,51 @@ class ProgressivePlayerCanBeACheater:
         return df
 
     def filtering_chess_games_for_control_group(self, df):
-        users = df.groupby('user_id', as_index=False)
-        users = users['user_id']
+        users = df['user_id'].unique()
         result = pd.DataFrame(columns=[
                 'date',
                 'game_id',
                 'time_control',
                 'clocks_list',
                 'move_count',
-                'user_id',
-                'move_score'
+                'user_id'
                 ])
-        n = 0
         for i in users:
-            user = users[0+n]
-            n+=1
-            df = self.merge_eval_and_clocks_after_filter(user_id=i)
-            time.sleep(1.5)
+            user = i
+            df = self.filtering_chess_games(user_id=user)
+            time.sleep(1)
             result = pd.concat([result, df],
                 ignore_index=True,
                 join="outer")
+        return result
+
+    def exporting_games_and_eval_for_control_group(self, df) -> pd.DataFrame:
+        result = pd.DataFrame(columns=[
+            'game_id',
+            'move_score'
+            ])
+        game_id = df['game_id']
+        user_id = df['user_id']
+        n = 0
+
+        for k in game_id:
+            user_id_n = str(user_id.iloc[[0+n]])
+            eval_games_by_id = self \
+                .lichess_analys \
+                .evals_for_filter(game_id=k, user_id=user_id_n)
+            eval_games_by_id['game_id'] = k
+            time.sleep(1)
+            result = pd.concat([result, eval_games_by_id],
+                ignore_index=True,
+                join="outer")
+            n+=1
+        return result
+
+    def merge_eval_and_clocks_for_control_group(self,
+        filtering_chess_games_for_control_group,
+        exporting_games_and_eval_for_control_group) -> pd.DataFrame:
+        result = filtering_chess_games_for_control_group \
+            .merge(exporting_games_and_eval_for_control_group,
+            on='game_id',
+            how='left')
         return result
