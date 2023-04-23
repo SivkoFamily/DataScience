@@ -277,20 +277,6 @@ class ProgressivePlayerCanBeACheater:
             how='left')
         return result
 
-    def data_for_stat_test_group(self, user_id: str) -> pd.DataFrame:
-        user_id = user_id
-        exporting_games_for_filter = self \
-            .lichess_analys \
-            .exporting_games_for_filter(id=user_id, max_games=1000)
-        users_chess_games = self \
-            .lichess_analys \
-            .user_chess_games(
-                id_user=user_id,
-                game_speed=self.perf_types,
-                exporting_games=exporting_games_for_filter)
-        users_chess_games['user_id'] = user_id
-        return users_chess_games
-
     def users_for_control_group(self, user_id: str) -> pd.DataFrame:
         merge_eval_and_clocks = self.merge_eval_and_clocks()
         pop_user = user_id
@@ -346,4 +332,34 @@ class ProgressivePlayerCanBeACheater:
             .merge(exporting_games_and_eval_for_control_group,
             on='game_id',
             how='left')
+        return result
+
+    def add_correlation_coefficient(self,
+        df_for_satatistical_test: pd.DataFrame) -> pd.Series:
+
+        len_df = df_for_satatistical_test.shape[0]
+        list_df_len = list(range(0,len_df,1))
+        correlation_list = []
+
+        for i in list_df_len:
+            len_clocks = len(df_for_satatistical_test['clocks_list_new'][i])
+            len_score = len(df_for_satatistical_test['move_score_new'][i])
+            if len_clocks != len_score:
+                if len_clocks < len_score:
+                    df_for_satatistical_test['clocks_list_new'][i] \
+                    .append(df_for_satatistical_test['clocks_list_new'][i][-1])
+                else:
+                    df_for_satatistical_test['move_score_new'][i] \
+                    .append(df_for_satatistical_test['move_score_new'][i][-1])
+            else:
+                d = {
+                'clocks_list': df_for_satatistical_test['clocks_list_new'][i],
+                'move_score': df_for_satatistical_test['move_score_new'][i]
+                }
+                df = pd.DataFrame(data=d)
+                t = df[['clocks_list', 'move_score']]
+                phik_overview = t.phik_matrix()
+                correlation_coefficient = phik_overview['clocks_list'][1]
+                correlation_list.append(correlation_coefficient)
+        result = pd.Series(correlation_list)
         return result

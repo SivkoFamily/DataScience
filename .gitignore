@@ -169,3 +169,7 @@ bin-release/
 /lichess_liderboard/templates/table_to_send.html
 /lichess_liderboard/templates/table_to_send.html
 /lichess_liderboard/lichess_work_palce.py
+/lichess_liderboard/data_for_stat_test_group.csv
+/lichess_liderboard/lichess_work_palce.py
+/lichess_liderboard/merge_eval_and_clocks_for_control_group.csv
+/lichess_liderboard/templates/table_to_send.html

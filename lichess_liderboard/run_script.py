@@ -41,4 +41,7 @@ merge_eval_and_clocks_for_control_group = \
         exporting_games_and_eval_for_control_group=
         exporting_games_and_eval_for_control_group
     )
-print(merge_eval_and_clocks_for_control_group)
+merge_eval_and_clocks_for_control_group \
+    .to_csv('./merge_eval_and_clocks_for_control_group.csv',
+    index=False,
+    sep=",")
