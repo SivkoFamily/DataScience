@@ -176,12 +176,18 @@ class LichessAnalys:
                 user_id_black=(i['players']['black']['user']['id'])
                 move_count.append(round(len(i['clocks']) / 2))
 
-                if user_id_black == id_user:
-                    rating.append(i['players']['black']['rating'])
-                    rating_diff.append(i['players']['black']['ratingDiff'])
-                else:
-                    rating.append(i['players']['white']['rating'])
-                    rating_diff.append(i['players']['white']['ratingDiff'])
+                try:
+                    if user_id_black == id_user:
+                        rating.append(i['players']['black']['rating'])
+                        rating_diff.append(i['players']['black']['ratingDiff'])
+                    else:
+                        rating.append(i['players']['white']['rating'])
+                        rating_diff.append(i['players']['white']['ratingDiff'])
+                except KeyError:
+                    if user_id_black == id_user:
+                        rating_diff.append(0)
+                    else:
+                        rating_diff.append(0)
 
                 if i['players']['black']['user']['id'] == id_user:
                     odd_values = i['clocks'][::2]
