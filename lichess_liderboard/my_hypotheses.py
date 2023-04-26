@@ -247,7 +247,6 @@ class ProgressivePlayerCanBeACheater:
         return df
 
     def exporting_games_and_eval_for_filter(self, df) -> pd.DataFrame:
-        # df = self.filtering_chess_games()
         result = pd.DataFrame(columns=[
             'game_id',
             'move_score'
@@ -362,4 +361,33 @@ class ProgressivePlayerCanBeACheater:
                 correlation_coefficient = phik_overview['clocks_list'][1]
                 correlation_list.append(correlation_coefficient)
         result = pd.Series(correlation_list)
+        return result
+
+    def levene_test(self, df_for_control_group: pd.DataFrame,
+        df_for_test_group: pd.DataFrame) -> pd.DataFrame:
+        result = pd.DataFrame(columns=[
+                'levene_p_value_list'])
+
+        df_for_test_group['clocks_list_new'] = \
+        [ast.literal_eval(i) for i in df_for_test_group['clocks_list']]
+        df_for_control_group['clocks_list_new'] = \
+        [ast.literal_eval(i) for i in df_for_control_group['clocks_list']]
+        test_group = df_for_test_group['clocks_list_new']
+        control_group = df_for_control_group['clocks_list_new']
+
+        for i in test_group:
+            levene_p_value_list = []
+            for k in control_group:
+                stat, p = levene(k, i, center='mean')
+                levene_p_value_list.append(round(p, 3))
+
+            columns = {'levene_p_value_list': str(levene_p_value_list)}
+            df = pd.DataFrame(data=columns, index=[0])
+            result = \
+            pd.concat([result, \
+                df], ignore_index=True , join="outer")
+
+        result['levene_p_value_list'] = \
+        [ast.literal_eval(i) for i in result['levene_p_value_list']]
+
         return result

@@ -175,3 +175,5 @@ bin-release/
 /lichess_liderboard/templates/table_to_send.html
 /lichess_liderboard/lichess_work_palce.py
 /lichess_liderboard/visualiz.ipynb
+/lichess_liderboard/templates/table_to_send.html
+/lichess_liderboard/visualiz.ipynb
