@@ -42,7 +42,7 @@ class LichessAnalys:
     def get_history_activity(
         self,
         user_id: str,
-        speed_variant: int) -> pd.DataFrame:
+        speed_variant: str) -> pd.DataFrame:
         logging.info('Start function get_history')
         try:
             result = self.client \
@@ -214,7 +214,7 @@ class LichessAnalys:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                         clocks_mean.append(round(np.mean(clocks_in_second), 2))
                         clocks_std.append(round(np.std(clocks_in_second), 2))
@@ -240,7 +240,7 @@ class LichessAnalys:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                         clocks_mean.append(round(np.mean(clocks_in_second), 2))
                         clocks_std.append(round(np.std(clocks_in_second), 2))
@@ -270,7 +270,7 @@ class LichessAnalys:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                         clocks_mean.append(round(np.mean(clocks_in_second), 2))
                         clocks_std.append(round(np.std(clocks_in_second), 2))
@@ -296,7 +296,7 @@ class LichessAnalys:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                         clocks_mean.append(round(np.mean(clocks_in_second), 2))
                         clocks_std.append(round(np.std(clocks_in_second), 2))

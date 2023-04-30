@@ -156,7 +156,7 @@ class ProgressivePlayerCanBeACheater:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                     else:
                         for values in odd_values:
@@ -179,7 +179,7 @@ class ProgressivePlayerCanBeACheater:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                     clocks_list.append([round(i, 2) for i in clocks_in_second])
                 else:
@@ -207,7 +207,7 @@ class ProgressivePlayerCanBeACheater:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                     else:
                         for values in odd_values:
@@ -230,7 +230,7 @@ class ProgressivePlayerCanBeACheater:
                                         [converted_odd_values.index(i) + 1])
                                     clocks_in_second.append(seconds)
                             except IndexError:
-                                seconds = i
+                                seconds = 0
                                 clocks_in_second.append(seconds)
                     clocks_list.append([round(i, 2) for i in clocks_in_second])
         columns = {
@@ -337,7 +337,7 @@ class ProgressivePlayerCanBeACheater:
         df_for_satatistical_test: pd.DataFrame) -> pd.Series:
 
         len_df = df_for_satatistical_test.shape[0]
-        list_df_len = list(range(0,len_df,1))
+        list_df_len = list(range(0, len_df, 1))
         correlation_list = []
 
         for i in list_df_len:
@@ -380,7 +380,6 @@ class ProgressivePlayerCanBeACheater:
             for k in control_group:
                 stat, p = levene(k, i, center='mean')
                 levene_p_value_list.append(round(p, 3))
-
             columns = {'levene_p_value_list': str(levene_p_value_list)}
             df = pd.DataFrame(data=columns, index=[0])
             result = \
@@ -389,5 +388,11 @@ class ProgressivePlayerCanBeACheater:
 
         result['levene_p_value_list'] = \
         [ast.literal_eval(i) for i in result['levene_p_value_list']]
+
+        leven_median = []
+        for i in result['levene_p_value_list']:
+            leven_median.append(np.median(i))
+        result['levene_p_value_median'] = leven_median
+        result['game_id'] = df_for_test_group['game_id']
 
         return result
