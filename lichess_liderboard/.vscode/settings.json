@@ -1,0 +1,12 @@
+{
+    "editor.rulers": [80
+
+    ],
+
+    "editor.renderWhitespace": "all",
+
+    "workbench.colorCustomizations": {
+        "editorRuler.foreground": "#502e4c",
+        "editorWhitespace.foreground": "#916f6f"
+    }
+}

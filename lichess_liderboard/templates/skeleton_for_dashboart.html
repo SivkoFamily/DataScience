@@ -1,0 +1,52 @@
+<html lang="en">
+<head>
+    <meta charset='UTF-8'>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lichess leaderboart</title>
+    <link rel="stylesheet" type="text/css" href="liderboart_style.css">
+</head>
+<body>
+    <h2>Lishess liderboart</h2>
+    <table style="width:100%" border-collapse: collapse>
+        <tr>
+            <th> game_id </th>
+            <th> date </th>
+            <th> game_speed </th>
+            <th> rating </th>
+            <th> rating_diff </th>
+            <th> clocks_mean </th>
+            <th> clocks_std </th>
+            <th> clocks_median </th>
+            <th> move_count </th>
+            <th> time_control </th>
+            <th> user_id </th>
+            <th> mistake </th>
+            <th> blunder </th>
+            <th> inaccuracy </th>
+            <th> acpl </th>
+        <tr>
+
+        {% for item in items %}
+        <tr>
+            <td>{{ item['game_id'] }}</td>
+            <td>{{ item['date'] }}</td>
+            <td>{{ item['game_speed'] }}</td>
+            <td>{{ item['rating'] }}</td>
+            <td>{{ item['rating_diff'] }}</td>
+            <td>{{ item['clocks_mean'] }}</td>
+            <td>{{ item['clocks_std'] }}</td>
+            <td>{{ item['clocks_median'] }}</td>
+            <td>{{ item['move_count'] }}</td>
+            <td>{{ item['time_control'] }}</td>
+            <td>{{ item['user_id'] }}</td>
+            <td>{{ item['mistake'] }}</td>
+            <td>{{ item['blunder'] }}</td>
+            <td>{{ item['inaccuracy'] }}</td>
+            <td>{{ item['acpl'] }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+
+</body>
+
+</html>
