@@ -117,7 +117,7 @@ class LichessAnalys:
             end_date_fn)
 
     def exporting_games(self, id: str, max_games: int):
-        start_date_fn, end_date_fn = self.get_dates(weeks=10)
+        start_date_fn, end_date_fn = self.get_dates(weeks=30)
         return self._internal_exporting_games(
             id,
             max_games,

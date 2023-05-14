@@ -17,8 +17,10 @@ hypotheses = hp.ProgressivePlayerCanBeACheater()
 message_to_send = ms.MessageToSend()
 
 
-data = lichessAnalys.exporting_games_for_filter(id='artistendo',max_games=200)
-data = list(data)
-with open('data.json', 'w') as json_file:
-    json.dump(data, json_file, indent=4, sort_keys=True, default=str)
+# data = lichessAnalys.exporting_games_for_filter(id='artistendo',max_games=200)
+# data = list(data)
+# with open('data.json', 'w') as json_file:
+#     json.dump(data, json_file, indent=4, sort_keys=True, default=str)
 
+def combining_main_and_statistical_data():
+    levene_test

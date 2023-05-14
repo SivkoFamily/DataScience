@@ -1,7 +1,19 @@
 import time
+import ast
+
+import pandas as pd
+from datetime import datetime, timedelta
+import numpy as np
+from scipy.stats import ttest_ind
+from scipy.stats import levene
+import scipy.stats as st
+import pylab
+import statsmodels.stats.api as sms
+import phik
+
 
 import LichessAnalys as li
-import pandas as pd
+
 
 class ProgressivePlayerCanBeACheater:
     def __init__(self):
@@ -310,7 +322,6 @@ class ProgressivePlayerCanBeACheater:
         game_id = df['game_id']
         user_id = df['user_id']
         n = 0
-
         for k in game_id:
             user_id_n = str(user_id.iloc[[0+n]])
             eval_games_by_id = self \
@@ -335,6 +346,12 @@ class ProgressivePlayerCanBeACheater:
 
     def add_correlation_coefficient(self,
         df_for_satatistical_test: pd.DataFrame) -> pd.Series:
+        print(df_for_satatistical_test)
+        print(type(df_for_satatistical_test['clocks_list'][0]))
+        df_for_satatistical_test['clocks_list_new'] = \
+        [ast.literal_eval(i) for i in df_for_satatistical_test['clocks_list']]
+        df_for_satatistical_test['move_score_new'] = \
+        [ast.literal_eval(i) for i in df_for_satatistical_test['move_score']]
 
         len_df = df_for_satatistical_test.shape[0]
         list_df_len = list(range(0, len_df, 1))
@@ -372,6 +389,7 @@ class ProgressivePlayerCanBeACheater:
         [ast.literal_eval(i) for i in df_for_test_group['clocks_list']]
         df_for_control_group['clocks_list_new'] = \
         [ast.literal_eval(i) for i in df_for_control_group['clocks_list']]
+
         test_group = df_for_test_group['clocks_list_new']
         control_group = df_for_control_group['clocks_list_new']
 
@@ -394,5 +412,18 @@ class ProgressivePlayerCanBeACheater:
             leven_median.append(np.median(i))
         result['levene_p_value_median'] = leven_median
         result['game_id'] = df_for_test_group['game_id']
+        result = result.drop(columns=['levene_p_value_list'])
+        return result
 
+    def combining_main_and_statistical_data(self,
+        user_id: str,
+        levene_test: pd.DataFrame,
+        df_classical: pd.DataFrame,
+        add_correlation_coefficient: pd.Series) -> pd.DataFrame:
+        user_id = user_id
+        df = merge_eval_and_clocks.query('user_id == @user_id')
+        levene_test['correlation_coefficient']= add_correlation_coefficient
+        result = df.merge(levene_test,
+                on='game_id',
+                how='left')
         return result
