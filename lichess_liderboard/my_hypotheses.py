@@ -346,8 +346,6 @@ class ProgressivePlayerCanBeACheater:
 
     def add_correlation_coefficient(self,
         df_for_satatistical_test: pd.DataFrame) -> pd.Series:
-        print(df_for_satatistical_test)
-        print(type(df_for_satatistical_test['clocks_list'][0]))
         df_for_satatistical_test['clocks_list_new'] = \
         [ast.literal_eval(i) for i in df_for_satatistical_test['clocks_list']]
         df_for_satatistical_test['move_score_new'] = \
@@ -360,13 +358,20 @@ class ProgressivePlayerCanBeACheater:
         for i in list_df_len:
             len_clocks = len(df_for_satatistical_test['clocks_list_new'][i])
             len_score = len(df_for_satatistical_test['move_score_new'][i])
-            if len_clocks != len_score:
-                if len_clocks < len_score:
-                    df_for_satatistical_test['clocks_list_new'][i] \
-                    .append(df_for_satatistical_test['clocks_list_new'][i][-1])
+            if len_clocks != len_score: 
+                if len_clocks > len_score:
+                    df_for_satatistical_test['clocks_list_new'][i].pop(-1)
                 else:
-                    df_for_satatistical_test['move_score_new'][i] \
-                    .append(df_for_satatistical_test['move_score_new'][i][-1])
+                    df_for_satatistical_test['move_score_new'][i].pop(-1)
+                d = {
+                'clocks_list': df_for_satatistical_test['clocks_list_new'][i],
+                'move_score': df_for_satatistical_test['move_score_new'][i]
+                }
+                df = pd.DataFrame(data=d)
+                t = df[['clocks_list', 'move_score']]
+                phik_overview = t.phik_matrix()
+                correlation_coefficient = phik_overview['clocks_list'][1]
+                correlation_list.append(correlation_coefficient)
             else:
                 d = {
                 'clocks_list': df_for_satatistical_test['clocks_list_new'][i],
