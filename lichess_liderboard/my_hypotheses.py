@@ -1,5 +1,6 @@
 import time
 import ast
+import json
 
 import pandas as pd
 from datetime import datetime, timedelta
@@ -347,9 +348,9 @@ class ProgressivePlayerCanBeACheater:
     def add_correlation_coefficient(self,
         df_for_satatistical_test: pd.DataFrame) -> pd.Series:
         df_for_satatistical_test['clocks_list_new'] = \
-        [ast.literal_eval(i) for i in df_for_satatistical_test['clocks_list']]
+        df_for_satatistical_test['clocks_list']
         df_for_satatistical_test['move_score_new'] = \
-        [ast.literal_eval(i) for i in df_for_satatistical_test['move_score']]
+        df_for_satatistical_test['move_score']
 
         len_df = df_for_satatistical_test.shape[0]
         list_df_len = list(range(0, len_df, 1))
@@ -391,9 +392,9 @@ class ProgressivePlayerCanBeACheater:
                 'levene_p_value_list'])
 
         df_for_test_group['clocks_list_new'] = \
-        [ast.literal_eval(i) for i in df_for_test_group['clocks_list']]
+        df_for_test_group['clocks_list']
         df_for_control_group['clocks_list_new'] = \
-        [ast.literal_eval(i) for i in df_for_control_group['clocks_list']]
+        df_for_control_group['clocks_list']
 
         test_group = df_for_test_group['clocks_list_new']
         control_group = df_for_control_group['clocks_list_new']
@@ -426,7 +427,7 @@ class ProgressivePlayerCanBeACheater:
         df_classical: pd.DataFrame,
         add_correlation_coefficient: pd.Series) -> pd.DataFrame:
         user_id = user_id
-        df = merge_eval_and_clocks.query('user_id == @user_id')
+        df = df_classical.query('user_id == @user_id')
         levene_test['correlation_coefficient']= add_correlation_coefficient
         result = df.merge(levene_test,
                 on='game_id',

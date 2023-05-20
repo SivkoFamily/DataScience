@@ -1,4 +1,5 @@
 import ast
+import json
 
 import berserk
 import logging
@@ -73,28 +74,28 @@ merge_eval_and_clocks_for_control_group \
     index=False,
     sep=",")
 
-# add_correlation_coefficient = \
-#     hypotheses.add_correlation_coefficient(
-#         df_for_satatistical_test=move_score_and_clocks)
-# add_correlation_coefficient \
-#     .to_csv('./add_correlation_coefficient.csv',
-#     index=False,
-#     sep=",")
+add_correlation_coefficient = \
+    hypotheses.add_correlation_coefficient(
+        df_for_satatistical_test=move_score_and_clocks)
+add_correlation_coefficient \
+    .to_csv('./add_correlation_coefficient.csv',
+    index=False,
+    sep=",")
 
-# levene_test = hypotheses.levene_test(
-#     df_for_control_group=merge_eval_and_clocks_for_control_group,
-#     df_for_test_group=move_score_and_clocks)
-# levene_test \
-#     .to_csv('./levene_test.csv',
-#     index=False,
-#     sep=",")
+levene_test = hypotheses.levene_test(
+    df_for_control_group=merge_eval_and_clocks_for_control_group,
+    df_for_test_group=move_score_and_clocks)
+levene_test \
+    .to_csv('./levene_test.csv',
+    index=False,
+    sep=",")
 
-# combining_main_and_statistical_data = combining_main_and_statistical_data(
-#     user_id=user_id,
-#     levene_test=levene_test,
-#     df_classical=classical_data,
-#     add_correlation_coefficient=add_correlation_coefficient)
-# combining_main_and_statistical_data \
-#     .to_csv('./combining_main_and_statistical_data.csv',
-#     index=False,
-#     sep=",")
+combining_main_and_statistical_data = hypotheses.combining_main_and_statistical_data(
+    user_id=user_id,
+    levene_test=levene_test,
+    df_classical=classical_data,
+    add_correlation_coefficient=add_correlation_coefficient)
+combining_main_and_statistical_data \
+    .to_csv('./combining_main_and_statistical_data.csv',
+    index=False,
+    sep=",")
