@@ -34,13 +34,13 @@ class MessageToSend:
         self.hypotheses = hp.ProgressivePlayerCanBeACheater()
         self.perf_types = 'classical'
 
-    def create_message_table(self, classical_data):
-        classical_data = classical_data.to_dict('records')
+    def create_message_table(self, data):
+        data = data.to_dict('records')
         env = Environment(
             loader=FileSystemLoader('templates'),
             autoescape=select_autoescape(['html', 'xml']))
         template = env.get_template('skeleton_for_dashboart.html')
-        message = template.render(items=classical_data)
+        message = template.render(items=data)
         with open('./templates/table_to_send.html', 'w') as ft:
             ft.write(message)
         return message

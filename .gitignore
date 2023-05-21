@@ -194,3 +194,6 @@ bin-release/
 /lichess_liderboard/run_script.py
 /lichess_liderboard/templates/table_to_send.html
 /lichess_liderboard/visualiz.ipynb
+/lichess_liderboard/send_message.py
+/lichess_liderboard/visualiz.ipynb
+/lichess_liderboard/run_script_cron.sh

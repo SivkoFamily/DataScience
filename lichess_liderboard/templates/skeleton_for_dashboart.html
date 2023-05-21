@@ -24,6 +24,8 @@
             <th> blunder </th>
             <th> inaccuracy </th>
             <th> acpl </th>
+            <th> levene_p_value_median </th>
+            <th> correlation_coefficient </th>
         <tr>
 
         {% for item in items %}
@@ -43,6 +45,8 @@
             <td>{{ item['blunder'] }}</td>
             <td>{{ item['inaccuracy'] }}</td>
             <td>{{ item['acpl'] }}</td>
+            <td>{{ item['levene_p_value_median'] }}</td>
+            <td>{{ item['correlation_coefficient'] }}</td>
         </tr>
         {% endfor %}
     </table>

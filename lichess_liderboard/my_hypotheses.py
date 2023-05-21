@@ -432,4 +432,6 @@ class ProgressivePlayerCanBeACheater:
         result = df.merge(levene_test,
                 on='game_id',
                 how='left')
+        result = result.dropna()
+        result = result.round(2)
         return result

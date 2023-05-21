@@ -1,5 +1,6 @@
 import ast
 import json
+import os
 
 import berserk
 import logging
@@ -12,10 +13,21 @@ import scipy.stats as st
 import pylab
 import statsmodels.stats.api as sms
 import phik
+import smtplib, ssl
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.message import EmailMessage
 
 import LichessAnalys as li
 import my_hypotheses as hp
 import my_message as ms
+from need_to_hide import SEND_EMAIL
+from need_to_hide import EMAIL_PASSWORD
+from need_to_hide import RECEIVER_ADDRESS
+
+sender_address = SEND_EMAIL
+sender_pass = EMAIL_PASSWORD
+receiver_address = RECEIVER_ADDRESS
 
 lichessAnalys = li.LichessAnalys()
 hypotheses = hp.ProgressivePlayerCanBeACheater()
@@ -24,7 +36,6 @@ message_to_send = ms.MessageToSend()
 df = hypotheses.merge_eval_and_clocks()
 df.to_csv('./df_classical.csv', index=False, sep=",")
 classical_data = pd.read_csv('./df_classical.csv',sep=',')
-message_to_send.create_message_table(classical_data=classical_data)
 user_id = hypotheses.user_for_detailed_analysis(df)
 filtering_chess_games = hypotheses.filtering_chess_games(user_id=user_id)
 filtering_chess_games.to_csv('./filtering_chess_games.csv',
@@ -99,3 +110,11 @@ combining_main_and_statistical_data \
     .to_csv('./combining_main_and_statistical_data.csv',
     index=False,
     sep=",")
+
+data_for_send = pd.read_csv('./combining_main_and_statistical_data.csv',sep=',')
+content = message_to_send.create_message_table(data_for_send)
+
+message_to_send.send_message(file=content,
+    send_email=sender_address,
+    receiver_address=receiver_address,
+    password=sender_pass)

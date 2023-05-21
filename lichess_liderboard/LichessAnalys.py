@@ -322,76 +322,97 @@ class LichessAnalys:
         self,
         game_id: str,
         user_id: str) -> pd.DataFrame:
-        result = self.client.games.export(game_id)
+        logging.info('Start function eval_games_by_id')
+        try:
+            result = self.client.games.export(game_id)
 
-        move_score = []
-        mistake = []
-        blunder = []
-        inaccuracy = []
-        acpl = []
+            move_score = []
+            mistake = []
+            blunder = []
+            inaccuracy = []
+            acpl = []
 
-        if result['players']['black']['user']['id'] == user_id:
-            eval_after_slices = []
-            list_analysis = result['analysis']
-            for i in list_analysis:
-                try:
-                    eval_after_slices.append(i['eval'])
-                except KeyError:
-                    eval_after_slices.append(i['mate'])
-            eval_after_slices = eval_after_slices[1::2]
-            [move_score.append(i) for i in eval_after_slices]
-            mistake.append(result['players']['black']['analysis']['mistake'])
-            blunder.append(result['players']['black']['analysis']['blunder'])
-            inaccuracy \
-                .append(result['players']['black']['analysis']['inaccuracy'])
-            acpl.append(result['players']['black']['analysis']['acpl'])
-        else:
-            eval_after_slices = []
-            list_analysis = result['analysis']
-            for i in list_analysis:
-                try:
-                    eval_after_slices.append(i['eval'])
-                except KeyError:
-                    eval_after_slices.append(i['mate'])
-            eval_after_slices = eval_after_slices[::2]
-            [move_score.append(i) for i in eval_after_slices]
-            mistake.append(result['players']['white']['analysis']['mistake'])
-            blunder.append(result['players']['white']['analysis']['blunder'])
-            inaccuracy \
-                .append(result['players']['white']['analysis']['inaccuracy'])
-            acpl.append(result['players']['white']['analysis']['acpl'])
-        columns = {
-            'mistake': mistake,
-            'blunder': blunder,
-            'inaccuracy': inaccuracy,
-            'acpl': acpl}
-        df = pd.DataFrame(data=columns)
+            if result['players']['black']['user']['id'] == user_id:
+                eval_after_slices = []
+                list_analysis = result['analysis']
+                for i in list_analysis:
+                    try:
+                        eval_after_slices.append(i['eval'])
+                    except KeyError:
+                        eval_after_slices.append(i['mate'])
+                eval_after_slices = eval_after_slices[1::2]
+                [move_score.append(i) for i in eval_after_slices]
+                mistake \
+                    .append(result['players']['black']['analysis']['mistake']
+                    )
+                blunder \
+                    .append(result['players']['black']['analysis']['blunder']
+                    )
+                inaccuracy \
+                    .append(result['players']['black']['analysis']['inaccuracy']
+                    )
+                acpl \
+                    .append(result['players']['black']['analysis']['acpl']
+                    )
+            else:
+                eval_after_slices = []
+                list_analysis = result['analysis']
+                for i in list_analysis:
+                    try:
+                        eval_after_slices.append(i['eval'])
+                    except KeyError:
+                        eval_after_slices.append(i['mate'])
+                eval_after_slices = eval_after_slices[::2]
+                [move_score.append(i) for i in eval_after_slices]
+                mistake \
+                    .append(result['players']['white']['analysis']['mistake']
+                    )
+                blunder \
+                    .append(result['players']['white']['analysis']['blunder']
+                    )
+                inaccuracy \
+                    .append(result['players']['white']['analysis']['inaccuracy']
+                    )
+                acpl.append(result['players']['white']['analysis']['acpl']
+                )
+            columns = {
+                'mistake': mistake,
+                'blunder': blunder,
+                'inaccuracy': inaccuracy,
+                'acpl': acpl}
+            df = pd.DataFrame(data=columns)
+        except:
+            logging.info('Function eval_games_by_id does not work correctly!')
         return df
 
     def evals_for_filter(self, game_id: str, user_id: str) -> pd.DataFrame:
-        result = self.client.games.export(game_id)
-        move_score = []
+        logging.info('Start function evals_for_filter')
+        try:
+            result = self.client.games.export(game_id)
+            move_score = []
 
-        if result['players']['black']['user']['id'] == user_id:
-            eval_after_slices = []
-            list_analysis = result['analysis']
-            for i in list_analysis:
-                try:
-                    eval_after_slices.append(i['eval'])
-                except KeyError:
-                    eval_after_slices.append(i['mate'])
-            eval_after_slices = eval_after_slices[1::2]
-            move_score.append(eval_after_slices)
-        else:
-            eval_after_slices = []
-            list_analysis = result['analysis']
-            for i in list_analysis:
-                try:
-                    eval_after_slices.append(i['eval'])
-                except KeyError:
-                    eval_after_slices.append(i['mate'])
-            eval_after_slices = eval_after_slices[::2]
-            move_score.append(eval_after_slices)
-        columns = {'move_score': move_score}
-        df = pd.DataFrame(data=columns)
+            if result['players']['black']['user']['id'] == user_id:
+                eval_after_slices = []
+                list_analysis = result['analysis']
+                for i in list_analysis:
+                    try:
+                        eval_after_slices.append(i['eval'])
+                    except KeyError:
+                        eval_after_slices.append(i['mate'])
+                eval_after_slices = eval_after_slices[1::2]
+                move_score.append(eval_after_slices)
+            else:
+                eval_after_slices = []
+                list_analysis = result['analysis']
+                for i in list_analysis:
+                    try:
+                        eval_after_slices.append(i['eval'])
+                    except KeyError:
+                        eval_after_slices.append(i['mate'])
+                eval_after_slices = eval_after_slices[::2]
+                move_score.append(eval_after_slices)
+            columns = {'move_score': move_score}
+            df = pd.DataFrame(data=columns)
+        except:
+            logging.info('Function evals_for_filter does not work correctly!')
         return df

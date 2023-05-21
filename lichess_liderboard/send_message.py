@@ -21,7 +21,7 @@ sender_address = SEND_EMAIL
 sender_pass = EMAIL_PASSWORD
 receiver_address = RECEIVER_ADDRESS
 
-classical_data = pd.read_csv('./df_classical.csv',sep=',')
+classical_data = pd.read_csv('./combining_main_and_statistical_data.csv',sep=',')
 content = message_to_send.create_message_table(classical_data)
 
 message_to_send.send_message(file=content,
