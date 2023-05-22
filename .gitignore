@@ -197,3 +197,6 @@ bin-release/
 /lichess_liderboard/send_message.py
 /lichess_liderboard/visualiz.ipynb
 /lichess_liderboard/run_script_cron.sh
+/lichess_liderboard/client_secrets.json
+/lichess_liderboard/work_palce.py
+/lichess_liderboard/work_place.ipynb

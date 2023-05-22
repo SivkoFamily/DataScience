@@ -12,9 +12,7 @@ import pylab
 import statsmodels.stats.api as sms
 import phik
 
-
 import LichessAnalys as li
-
 
 class ProgressivePlayerCanBeACheater:
     def __init__(self):
@@ -31,7 +29,6 @@ class ProgressivePlayerCanBeACheater:
         leaders_in_progress = self \
             .lichess_analys \
             .data_processing(df=df)
-
         return leaders_in_progress
 
     def users_by_exporting_games(self) -> pd.DataFrame:
@@ -116,7 +113,7 @@ class ProgressivePlayerCanBeACheater:
             how='left')
         return result
 
-    def user_for_detailed_analysis(self, df) -> str:
+    def user_for_detailed_analysis(self, df: pd.DataFrame) -> str:
         df_ret = df.groupby('user_id', as_index=False) \
         .agg({'clocks_std':'mean', 'clocks_median': 'mean'}) \
         .sort_values(['clocks_std', 'clocks_median'], ascending=[True, True])
@@ -133,7 +130,7 @@ class ProgressivePlayerCanBeACheater:
         clocks_list = []
 
         for i in games_user:
-            if i['perf'].lower() == 'classical':# ВНИМАНИЕ HARDCODE
+            if i['perf'].lower() == 'classical':
                 increment = str(i['clock']['increment'])
                 initial = i['clock']['initial']
                 initial_f = i['clock']['initial'] / 60
