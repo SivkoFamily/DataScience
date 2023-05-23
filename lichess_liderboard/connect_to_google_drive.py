@@ -1,28 +1,31 @@
-from pydrive.auth import GoogleAuth
-from pydrive.drive import GoogleDrive
+import logging
 import os
 
-gauth = GoogleAuth()
-gauth.LocalWebserverAuth()
+from pydrive.auth import GoogleAuth
+from pydrive.drive import GoogleDrive
 
-def upload_dir(dir_path=''):
+logging.basicConfig(
+    filename='test_logs.log',
+    level=logging.DEBUG,
+    format='%(asctime)s %(levelname)s %(funcName)s || %(message)s', force=True)
+
+def upload_file_in_google_drive(dir_path=''):
+    gauth = GoogleAuth()
+    gauth.LocalWebserverAuth()
+    logging.info('Start function upload_dir')
     try:
         drive = GoogleDrive(gauth)
-        
         for file_name in os.listdir(dir_path):
-        
+            print(file_name)
             my_file = drive.CreateFile({'title': f'{file_name}'})
             my_file.SetContentFile(os.path.join(dir_path, file_name))
             my_file.Upload()
-            
-            print(f'File {file_name} was uploaded!')
-            
-        return 'Success!Have a good day!'
-    except Exception as _ex:
-        return 'Got some trouble, check your code please!'
+        logging.info('Finish function upload_dir')
+    except:
+        logging.info('Function upload_dirupload_dir does not work !')
 
 def main():
-    print(upload_dir(dir_path='path_to_dir'))
+    print(upload_file_in_google_drive(dir_path='D:/dev/DataScience/lichess_liderboard/data_for_visualization'))
 
 if __name__ =='__main__':
     main()

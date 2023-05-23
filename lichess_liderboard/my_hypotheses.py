@@ -430,5 +430,6 @@ class ProgressivePlayerCanBeACheater:
                 on='game_id',
                 how='left')
         result = result.dropna()
+        result = result.drop_duplicates()
         result = result.round(2)
         return result

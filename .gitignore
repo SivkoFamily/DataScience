@@ -200,3 +200,6 @@ bin-release/
 /lichess_liderboard/client_secrets.json
 /lichess_liderboard/work_palce.py
 /lichess_liderboard/work_place.ipynb
+/lichess_liderboard/data_for_visualization/filtering_chess_games.csv
+/lichess_liderboard/data_for_visualization/eval_for_filter.csv
+/lichess_liderboard/data_for_visualization/combining_main_and_statistical_data.csv
