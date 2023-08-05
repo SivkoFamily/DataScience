@@ -314,7 +314,7 @@ class LichessAnalys:
             'time_control': time_control
             }
         df = pd.DataFrame(data=columns)
-        df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
+        df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d-%H-%M-%S')
 
         return df
 

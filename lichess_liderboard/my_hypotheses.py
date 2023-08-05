@@ -251,7 +251,8 @@ class ProgressivePlayerCanBeACheater:
             'move_count': move_count
             }
         df = pd.DataFrame(data=columns)
-        df['date'] = pd.to_datetime(df['date']).dt.strftime('%Y-%m-%d')
+        df['date'] = pd.to_datetime(df['date']).dt \
+            .strftime('%Y-%m-%d-%H-%M-%S')
         df = df[df['move_count'] > 25]
         df['user_id'] = user_id
         return df
